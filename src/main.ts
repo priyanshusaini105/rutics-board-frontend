@@ -183,88 +183,88 @@ class KanbanBoard {
   // Create a task element from data
   createTaskElement(task: any) {
     const article = document.createElement('article');
-    article.className = 'task-card mx-2 rounded-lg border border-zinc-800 bg-zinc-800/60 p-3 shadow-sm hover:border-zinc-700 fade-in-up';
+    article.className = 'task-card rt:mx-2 rt:rounded-lg rt:border rt:border-zinc-800 rt:bg-zinc-800/60 rt:p-3 rt:shadow-sm rt:hover:border-zinc-700 fade-in-up';
     article.setAttribute('data-kanban-task', 'true');
     article.setAttribute('data-task-id', task.id);
 
     // Project color mapping
     const colorMap: { [key: string]: string } = {
-      'fuchsia': 'bg-fuchsia-700/40 text-fuchsia-300',
-      'blue': 'bg-blue-700/40 text-blue-300',
-      'purple': 'bg-purple-700/40 text-purple-300',
-      'green': 'bg-green-700/40 text-green-300',
-      'orange': 'bg-orange-700/40 text-orange-300',
-      'cyan': 'bg-cyan-700/40 text-cyan-300',
-      'violet': 'bg-violet-700/40 text-violet-300',
-      'red': 'bg-red-700/40 text-red-300',
-      'yellow': 'bg-yellow-700/40 text-yellow-300',
-      'pink': 'bg-pink-700/40 text-pink-300'
+      'fuchsia': 'rt:bg-fuchsia-700/40 rt:text-fuchsia-300',
+      'blue': 'rt:bg-blue-700/40 rt:text-blue-300',
+      'purple': 'rt:bg-purple-700/40 rt:text-purple-300',
+      'green': 'rt:bg-green-700/40 rt:text-green-300',
+      'orange': 'rt:bg-orange-700/40 rt:text-orange-300',
+      'cyan': 'rt:bg-cyan-700/40 rt:text-cyan-300',
+      'violet': 'rt:bg-violet-700/40 rt:text-violet-300',
+      'red': 'rt:bg-red-700/40 rt:text-red-300',
+      'yellow': 'rt:bg-yellow-700/40 rt:text-yellow-300',
+      'pink': 'rt:bg-pink-700/40 rt:text-pink-300'
     };
 
     // Status badge mapping
     const statusMap: { [key: string]: { class: string; text: string; icon: string } } = {
-      'blocked': { class: 'bg-red-900/50 text-red-300 border-red-800/60', text: 'Blocked', icon: 'fas fa-ban' },
-      'paused': { class: 'bg-yellow-900/50 text-yellow-300 border-yellow-800/60', text: 'Paused', icon: 'fas fa-pause' },
-      'cancelled': { class: 'bg-gray-900/50 text-gray-400 border-gray-800/60', text: 'Cancelled', icon: 'fas fa-times' },
-      'done': { class: 'bg-green-900/50 text-green-300 border-green-800/60', text: 'Done', icon: 'fas fa-check' }
+      'blocked': { class: 'rt:bg-red-900/50 rt:text-red-300 rt:border-red-800/60', text: 'Blocked', icon: 'fas fa-ban' },
+      'paused': { class: 'rt:bg-yellow-900/50 rt:text-yellow-300 rt:border-yellow-800/60', text: 'Paused', icon: 'fas fa-pause' },
+      'cancelled': { class: 'rt:bg-gray-900/50 rt:text-gray-400 rt:border-gray-800/60', text: 'Cancelled', icon: 'fas fa-times' },
+      'done': { class: 'rt:bg-green-900/50 rt:text-green-300 rt:border-green-800/60', text: 'Done', icon: 'fas fa-check' }
     };
 
-    const projectColorClass = colorMap[task.projectColor] || 'bg-gray-700/40 text-gray-300';
+    const projectColorClass = colorMap[task.projectColor] || 'rt:bg-gray-700/40 rt:text-gray-300';
 
     // Create status badge and archive button row
     const statusRow = task.status && statusMap[task.status] ? `
-      <div class="mb-2 flex items-center justify-between">
-        <span class="inline-flex items-center gap-1 rounded border ${statusMap[task.status].class} px-2 py-0.5 text-[10px] font-medium cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0" data-action="toggle-status" data-task-id="${task.id}">
-          <i class="${statusMap[task.status].icon} text-xs"></i>
+      <div class="rt:mb-2 rt:flex rt:items-center rt:justify-between">
+        <span class="rt:inline-flex rt:items-center rt:gap-1 rt:rounded rt:border ${statusMap[task.status].class} rt:px-2 rt:py-0.5 rt:text-[10px] rt:font-medium rt:cursor-pointer rt:hover:opacity-80 rt:transition-opacity rt:flex-shrink-0" data-action="toggle-status" data-task-id="${task.id}">
+          <i class="${statusMap[task.status].icon} rt:text-xs"></i>
           ${statusMap[task.status].text}
         </span>
-        <button data-action="archive-task" data-task-id="${task.id}" class="p-1 hover:bg-red-700/20 hover:text-red-400 rounded transition-all duration-200 flex-shrink-0" title="Archive task">
-          <i class="fas fa-archive text-zinc-500 hover:text-red-400 text-sm"></i>
+        <button data-action="archive-task" data-task-id="${task.id}" class="rt:p-1 rt:hover:bg-red-700/20 rt:hover:text-red-400 rt:rounded rt:transition-all rt:duration-200 rt:flex-shrink-0" title="Archive task">
+          <i class="fas fa-archive rt:text-zinc-500 rt:hover:text-red-400 rt:text-sm"></i>
         </button>
       </div>
     ` : `
-      <div class="mb-2 flex items-center justify-between">
-        <span class="inline-flex items-center gap-1 rounded border bg-zinc-800/60 text-zinc-400 border-zinc-700/60 px-2 py-0.5 text-[10px] font-medium cursor-pointer hover:bg-zinc-700/60 transition-colors flex-shrink-0" data-action="set-status" data-task-id="${task.id}">
-          <i class="fas fa-plus text-xs"></i>
+      <div class="rt:mb-2 rt:flex rt:items-center rt:justify-between">
+        <span class="rt:inline-flex rt:items-center rt:gap-1 rt:rounded rt:border rt:bg-zinc-800/60 rt:text-zinc-400 rt:border-zinc-700/60 rt:px-2 rt:py-0.5 rt:text-[10px] rt:font-medium rt:cursor-pointer rt:hover:bg-zinc-700/60 rt:transition-colors rt:flex-shrink-0" data-action="set-status" data-task-id="${task.id}">
+          <i class="fas fa-plus rt:text-xs"></i>
           Status
         </span>
-        <button data-action="archive-task" data-task-id="${task.id}" class="p-1 hover:bg-red-700/20 hover:text-red-400 rounded transition-all duration-200 flex-shrink-0" title="Archive task">
-          <i class="fas fa-archive text-zinc-500 hover:text-red-400 text-sm"></i>
+        <button data-action="archive-task" data-task-id="${task.id}" class="rt:p-1 rt:hover:bg-red-700/20 rt:hover:text-red-400 rt:rounded rt:transition-all rt:duration-200 rt:flex-shrink-0" title="Archive task">
+          <i class="fas fa-archive rt:text-zinc-500 rt:hover:text-red-400 rt:text-sm"></i>
         </button>
       </div>
     `;
 
     // Create approval button for review tasks
     const approvalButton = task.hasApproval ? `
-      <div class="mt-2 flex gap-2">
-        <button data-action="approve-task" data-task-id="${task.id}" class="px-2 py-1 text-[12px] rounded bg-emerald-700/40 text-emerald-300 border border-emerald-800/60">
+      <div class="rt:mt-2 rt:flex rt:gap-2">
+        <button data-action="approve-task" data-task-id="${task.id}" class="rt:px-2 rt:py-1 rt:text-[12px] rt:rounded rt:bg-emerald-700/40 rt:text-emerald-300 rt:border rt:border-emerald-800/60">
           Approve
         </button>
       </div>
     ` : '';
 
     // Create time display for non-review tasks
-    const timeDisplay = task.time ? `<span class="text-[11px] text-zinc-400 flex-shrink-0">${this.escapeHtml(task.time)}</span>` : '';
+    const timeDisplay = task.time ? `<span class="rt:text-[11px] rt:text-zinc-400 rt:flex-shrink-0">${this.escapeHtml(task.time)}</span>` : '';
 
     // Truncate long titles with proper word breaking
     const truncatedTitle = this.truncateText(task.title, 80);
 
     article.innerHTML = `
       ${statusRow}
-      <header class="flex items-start justify-between group">
-        <h3 class="text-sm font-medium pr-2 break-words-force min-w-0 flex-1" title="${this.escapeHtml(task.title)}">${this.escapeHtml(truncatedTitle)}</h3>
-        <div class="flex items-center gap-1 flex-shrink-0">
+      <header class="rt:flex rt:items-start rt:justify-between rt:group">
+        <h3 class="rt:text-sm rt:font-medium rt:pr-2 break-words-force rt:min-w-0 rt:flex-1" title="${this.escapeHtml(task.title)}">${this.escapeHtml(truncatedTitle)}</h3>
+        <div class="rt:flex rt:items-center rt:gap-1 rt:flex-shrink-0">
           ${timeDisplay}
         </div>
       </header>
       ${approvalButton}
-      <footer class="mt-2 flex items-center justify-between">
-        <div class="flex items-center gap-2 min-w-0 flex-1">
-          <img class="h-5 w-5 rounded-full flex-shrink-0" src="${task.avatar}" alt="${this.escapeHtml(task.assignee)}">
-          <span class="task-assignee text-xs text-zinc-300 truncate" title="${this.escapeHtml(task.assignee)}">${this.escapeHtml(task.assignee)}</span>
+      <footer class="rt:mt-2 rt:flex rt:items-center rt:justify-between">
+        <div class="rt:flex rt:items-center rt:gap-2 rt:min-w-0 rt:flex-1">
+          <img class="rt:h-5 rt:w-5 rt:rounded-full rt:flex-shrink-0" src="${task.avatar}" alt="${this.escapeHtml(task.assignee)}">
+          <span class="task-assignee rt:text-xs rt:text-zinc-300 rt:truncate" title="${this.escapeHtml(task.assignee)}">${this.escapeHtml(task.assignee)}</span>
         </div>
-        <div class="flex items-center gap-1 flex-shrink-0">
-          <span class="task-project rounded ${projectColorClass} px-2 py-0.5 text-[11px] truncate max-w-24" title="${this.escapeHtml(task.project)}">${this.escapeHtml(task.project)}</span>
+        <div class="rt:flex rt:items-center rt:gap-1 rt:flex-shrink-0">
+          <span class="task-project rt:rounded ${projectColorClass} rt:px-2 rt:py-0.5 rt:text-[11px] rt:truncate rt:max-w-24" title="${this.escapeHtml(task.project)}">${this.escapeHtml(task.project)}</span>
         </div>
       </footer>
     `;
@@ -297,17 +297,17 @@ class KanbanBoard {
 
     sortedProjects.forEach((project: any) => {
       const projectHtml = `
-        <div class="project-item group flex items-center justify-between px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300">
-          <a class="flex items-center gap-2 min-w-0 flex-1 cursor-pointer" href="#" data-project-id="${project.id}">
-            ${project.starred ? '<i class="fas fa-star text-amber-400 text-xs flex-shrink-0"></i>' : ''}
-            <span class="project-name truncate text-sm" title="${this.escapeHtml(project.name)}">${this.escapeHtml(project.name)}</span>
+        <div class="project-item rt:group rt:flex rt:items-center rt:justify-between rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300">
+          <a class="rt:flex rt:items-center rt:gap-2 rt:min-w-0 rt:flex-1 rt:cursor-pointer" href="#" data-project-id="${project.id}">
+            ${project.starred ? '<i class="fas fa-star rt:text-amber-400 rt:text-xs rt:flex-shrink-0"></i>' : ''}
+            <span class="project-name rt:truncate rt:text-sm" title="${this.escapeHtml(project.name)}">${this.escapeHtml(project.name)}</span>
           </a>
-          <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-            <button class="project-star-btn p-1 hover:bg-zinc-700 rounded" data-project-id="${project.id}" title="${project.starred ? 'Unstar project' : 'Star project'}">
-              <i class="fas fa-star text-xs ${project.starred ? 'text-amber-400' : 'text-zinc-500'}"></i>
+          <div class="rt:flex rt:items-center rt:gap-1 rt:opacity-0 rt:group-hover:opacity-100 rt:transition-opacity rt:flex-shrink-0">
+            <button class="project-star-btn rt:p-1 rt:hover:bg-zinc-700 rt:rounded" data-project-id="${project.id}" title="${project.starred ? 'Unstar project' : 'Star project'}">
+              <i class="fas fa-star rt:text-xs ${project.starred ? 'rt:text-amber-400' : 'rt:text-zinc-500'}"></i>
             </button>
-            <button class="project-delete-btn p-1 hover:bg-red-600 rounded" data-project-id="${project.id}" title="Delete project">
-              <i class="fas fa-trash text-xs text-zinc-500 hover:text-white"></i>
+            <button class="project-delete-btn rt:p-1 rt:hover:bg-red-600 rt:rounded" data-project-id="${project.id}" title="Delete project">
+              <i class="fas fa-trash rt:text-xs rt:text-zinc-500 rt:hover:text-white"></i>
             </button>
           </div>
         </div>
@@ -661,10 +661,10 @@ class KanbanBoard {
   // Show notification
   showNotification(message: string, type: 'success' | 'error' | 'info' = 'info') {
     const notification = document.createElement('div');
-    notification.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform translate-x-full ${
-      type === 'success' ? 'bg-green-600 text-white' :
-      type === 'error' ? 'bg-red-600 text-white' :
-      'bg-blue-600 text-white'
+    notification.className = `rt:fixed rt:top-4 rt:right-4 rt:z-50 rt:px-4 rt:py-2 rt:rounded-lg rt:text-sm rt:font-medium rt:transition-all rt:duration-300 rt:transform rt:translate-x-full ${
+      type === 'success' ? 'rt:bg-green-600 rt:text-white' :
+      type === 'error' ? 'rt:bg-red-600 rt:text-white' :
+      'rt:bg-blue-600 rt:text-white'
     }`;
     notification.textContent = message;
     
@@ -672,12 +672,12 @@ class KanbanBoard {
     
     // Slide in
     setTimeout(() => {
-      notification.classList.remove('translate-x-full');
+      notification.classList.remove('rt:translate-x-full');
     }, 10);
     
     // Remove after 3 seconds
     setTimeout(() => {
-      notification.classList.add('translate-x-full');
+      notification.classList.add('rt:translate-x-full');
       setTimeout(() => {
         notification.remove();
       }, 300);
@@ -847,8 +847,8 @@ function renderArchivedTasks() {
   
   if (archivedTasks.length === 0) {
     container.innerHTML = `
-      <div class="text-center py-8 text-zinc-400">
-        <i class="fas fa-archive text-4xl mb-4 opacity-50"></i>
+      <div class="rt:text-center rt:py-8 rt:text-zinc-400">
+        <i class="fas fa-archive rt:text-4xl rt:mb-4 rt:opacity-50"></i>
         <p>No archived tasks</p>
       </div>
     `;
@@ -858,29 +858,29 @@ function renderArchivedTasks() {
   container.innerHTML = archivedTasks.map((task: any) => {
     const archivedDate = new Date(task.archivedAt).toLocaleDateString();
     const statusBadge = task.status ? `
-      <span class="inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[10px] font-medium ${getStatusBadgeClass(task.status)}">
+      <span class="rt:inline-flex rt:items-center rt:gap-1 rt:rounded rt:border rt:px-2 rt:py-0.5 rt:text-[10px] rt:font-medium ${getStatusBadgeClass(task.status)}">
         <i class="${getStatusIcon(task.status)}"></i> ${task.status.charAt(0).toUpperCase() + task.status.slice(1)}
       </span>
     ` : '';
 
     return `
-      <div class="bg-zinc-800/60 border border-zinc-700 rounded-lg p-4">
-        <div class="flex justify-between items-start mb-2">
-          <div class="flex-1">
-            <h3 class="font-medium text-zinc-100 mb-1">${task.title}</h3>
+      <div class="rt:bg-zinc-800/60 rt:border rt:border-zinc-700 rt:rounded-lg rt:p-4">
+        <div class="rt:flex rt:justify-between rt:items-start rt:mb-2">
+          <div class="rt:flex-1">
+            <h3 class="rt:font-medium rt:text-zinc-100 rt:mb-1">${task.title}</h3>
             ${statusBadge}
           </div>
-          <div class="flex gap-2 ml-4">
-            <button data-action="restore-task" data-task-id="${task.id}" class="px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors">
+          <div class="rt:flex rt:gap-2 rt:ml-4">
+            <button data-action="restore-task" data-task-id="${task.id}" class="rt:px-2 rt:py-1 rt:text-xs rt:bg-blue-600 rt:hover:bg-blue-700 rt:text-white rt:rounded rt:transition-colors">
               Restore
             </button>
-            <button data-action="delete-archived-task" data-task-id="${task.id}" class="px-2 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded transition-colors">
+            <button data-action="delete-archived-task" data-task-id="${task.id}" class="rt:px-2 rt:py-1 rt:text-xs rt:bg-red-600 rt:hover:bg-red-700 rt:text-white rt:rounded rt:transition-colors">
               Delete
             </button>
           </div>
         </div>
-        <div class="flex justify-between items-center text-xs text-zinc-400">
-          <div class="flex items-center gap-4">
+        <div class="rt:flex rt:justify-between rt:items-center rt:text-xs rt:text-zinc-400">
+          <div class="rt:flex rt:items-center rt:gap-4">
             <span><i class="fas fa-user"></i> ${task.assignee}</span>
             <span><i class="fas fa-folder"></i> ${task.project}</span>
             ${task.time ? `<span><i class="fas fa-clock"></i> ${task.time}</span>` : ''}
@@ -896,12 +896,12 @@ function renderArchivedTasks() {
 
 function getStatusBadgeClass(status: string) {
   const statusMap: { [key: string]: string } = {
-    'blocked': 'bg-red-900/50 text-red-300 border-red-800/60',
-    'paused': 'bg-yellow-900/50 text-yellow-300 border-yellow-800/60',
-    'cancelled': 'bg-gray-900/50 text-gray-400 border-gray-800/60',
-    'done': 'bg-green-900/50 text-green-300 border-green-800/60'
+    'blocked': 'rt:bg-red-900/50 rt:text-red-300 rt:border-red-800/60',
+    'paused': 'rt:bg-yellow-900/50 rt:text-yellow-300 rt:border-yellow-800/60',
+    'cancelled': 'rt:bg-gray-900/50 rt:text-gray-400 rt:border-gray-800/60',
+    'done': 'rt:bg-green-900/50 rt:text-green-300 rt:border-green-800/60'
   };
-  return statusMap[status] || 'bg-zinc-700/40 text-zinc-300';
+  return statusMap[status] || 'rt:bg-zinc-700/40 rt:text-zinc-300';
 }
 
 function getStatusIcon(status: string) {
@@ -926,11 +926,11 @@ function showStatusMenu(taskId: string, targetElement: HTMLElement) {
   
   // Create status menu
   const menu = document.createElement('div');
-  menu.className = 'status-menu absolute z-50 bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg p-1 min-w-[120px]';
+  menu.className = 'status-menu rt:absolute rt:z-50 rt:bg-zinc-800 rt:border rt:border-zinc-700 rt:rounded-lg rt:shadow-lg rt:p-1 rt:min-w-[120px]';
   
   statuses.forEach(status => {
     const button = document.createElement('button');
-    button.className = 'w-full text-left px-2 py-1.5 text-xs rounded hover:bg-zinc-700 text-zinc-300 flex items-center gap-2';
+    button.className = 'rt:w-full rt:text-left rt:px-2 rt:py-1.5 rt:text-xs rt:rounded rt:hover:bg-zinc-700 rt:text-zinc-300 rt:flex rt:items-center rt:gap-2';
     button.innerHTML = `
       ${status.icon ? `<i class="${status.icon}"></i>` : ''}
       <span>${status.label}</span>

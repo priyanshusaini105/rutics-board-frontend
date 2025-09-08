@@ -1,163 +1,163 @@
 <!doctype html>
-<html class="dark" lang="en">
+<html class="rt:dark" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kanban Dashboard</title>
   </head>
-  <body class="bg-zinc-900 text-zinc-100 w-screen">
+  <body class="rt:bg-zinc-900 rt:text-zinc-100 rt:w-screen">
     <!-- Mobile Header -->
-    <div class="lg:hidden flex items-center justify-between p-4 bg-zinc-800 border-b border-zinc-700">
-      <h1 class="text-lg font-semibold">Kanban Dashboard</h1>
-      <button id="open-mobile-menu" class="p-2 rounded-md hover:bg-zinc-700">
+    <div class="rt:lg:hidden rt:flex rt:items-center rt:justify-between rt:p-4 rt:bg-zinc-800 rt:border-b rt:border-zinc-700">
+      <h1 class="rt:text-lg rt:font-semibold">Kanban Dashboard</h1>
+      <button id="open-mobile-menu" class="rt:p-2 rt:rounded-md rt:hover:bg-zinc-700">
         <i class="fas fa-bars"></i>
       </button>
     </div>
 
     <!-- Mobile Sidebar Overlay -->
-    <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden hidden">
-      <aside id="mobile-sidebar" class="fixed left-0 top-0 h-full w-80 bg-zinc-900 border-r border-zinc-800 overflow-y-auto z-50 transform -translate-x-full transition-transform duration-300">
-        <div class="h-14 flex items-center justify-between px-4 border-b border-zinc-700">
-          <div class="flex items-center">
-            <div class="h-8 w-8 rounded-full bg-zinc-700"></div>
-            <span class="ml-3 text-sm font-semibold text-zinc-300">Logo</span>
+    <div id="mobile-sidebar-overlay" class="rt:fixed rt:inset-0 rt:bg-black rt:bg-opacity-50 rt:z-40 rt:lg:hidden rt:hidden">
+      <aside id="mobile-sidebar" class="rt:fixed rt:left-0 rt:top-0 rt:h-full rt:w-80 rt:bg-zinc-900 rt:border-r rt:border-zinc-800 rt:overflow-y-auto rt:z-50 rt:transform rt:-translate-x-full rt:transition-transform rt:duration-300">
+        <div class="rt:h-14 rt:flex rt:items-center rt:justify-between rt:px-4 rt:border-b rt:border-zinc-700">
+          <div class="rt:flex rt:items-center">
+            <div class="rt:h-8 rt:w-8 rt:rounded-full rt:bg-zinc-700"></div>
+            <span class="rt:ml-3 rt:text-sm rt:font-semibold rt:text-zinc-300">Logo</span>
           </div>
-          <button id="close-mobile-menu" class="p-2 rounded-md hover:bg-zinc-800">
+          <button id="close-mobile-menu" class="rt:p-2 rt:rounded-md rt:hover:bg-zinc-800">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <nav class="px-2 py-3 space-y-6 text-sm">
-          <div class="space-y-1">
-            <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px]">Main</div>
-            <a class="flex items-center gap-2 px-2 py-2 rounded-md bg-zinc-800 text-zinc-100" href="#">
-              <i class="fas fa-th-large w-4 h-4 text-center flex-shrink-0"></i>
-              <span class="truncate">My Desk</span>
+        <nav class="rt:px-2 rt:py-3 rt:space-y-6 rt:text-sm">
+          <div class="rt:space-y-1">
+            <div class="rt:px-2 rt:text-zinc-400 rt:uppercase rt:tracking-wide rt:text-[11px]">Main</div>
+            <a class="rt:flex rt:items-center rt:gap-2 rt:px-2 rt:py-2 rt:rounded-md rt:bg-zinc-800 rt:text-zinc-100" href="#">
+              <i class="fas fa-th-large rt:w-4 rt:h-4 rt:text-center rt:flex-shrink-0"></i>
+              <span class="rt:truncate">My Desk</span>
             </a>
-            <a class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">
-              <i class="fas fa-layer-group w-4 h-4 text-center flex-shrink-0"></i>
-              <span class="truncate">Everything</span>
+            <a class="rt:flex rt:items-center rt:gap-2 rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300" href="#">
+              <i class="fas fa-layer-group rt:w-4 rt:h-4 rt:text-center rt:flex-shrink-0"></i>
+              <span class="rt:truncate">Everything</span>
             </a>
           </div>
-          <div class="space-y-1">
-            <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px] flex justify-between items-center">
+          <div class="rt:space-y-1">
+            <div class="rt:px-2 rt:text-zinc-400 rt:uppercase rt:tracking-wide rt:text-[11px] rt:flex rt:justify-between rt:items-center">
               <span>Projects</span>
-              <button data-action="open-new-project-modal" class="w-4 h-4 bg-zinc-600 hover:bg-zinc-500 rounded text-zinc-200 text-xs flex items-center justify-center transition-colors flex-shrink-0">
+              <button data-action="open-new-project-modal" class="rt:w-4 rt:h-4 rt:bg-zinc-600 rt:hover:bg-zinc-500 rt:rounded rt:text-zinc-200 rt:text-xs rt:flex rt:items-center rt:justify-center rt:transition-colors rt:flex-shrink-0">
                 +
               </button>
             </div>
-            <ul class="space-y-1 max-h-80 overflow-y-auto custom-scrollbar" id="mobile-project-list">
+            <ul class="rt:space-y-1 rt:max-h-80 rt:overflow-y-auto custom-scrollbar" id="mobile-project-list">
               <!-- Projects will be dynamically loaded here -->
             </ul>
           </div>
-          <div class="mt-6 space-y-1">
-            <a class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">
-              <i class="fas fa-question-circle w-4 h-4 text-center flex-shrink-0"></i>
-              <span class="truncate">Need Help</span>
+          <div class="rt:mt-6 rt:space-y-1">
+            <a class="rt:flex rt:items-center rt:gap-2 rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300" href="#">
+              <i class="fas fa-question-circle rt:w-4 rt:h-4 rt:text-center rt:flex-shrink-0"></i>
+              <span class="rt:truncate">Need Help</span>
             </a>
-            <a class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">
-              <i class="fas fa-cog w-4 h-4 text-center flex-shrink-0"></i>
-              <span class="truncate">Settings</span>
+            <a class="rt:flex rt:items-center rt:gap-2 rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300" href="#">
+              <i class="fas fa-cog rt:w-4 rt:h-4 rt:text-center rt:flex-shrink-0"></i>
+              <span class="rt:truncate">Settings</span>
             </a>
-            <button data-action="open-archive-modal" class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300 w-full text-left">
-              <i class="fas fa-archive w-4 h-4 text-center flex-shrink-0"></i>
-              <span class="truncate">Archive</span>
+            <button data-action="open-archive-modal" class="rt:flex rt:items-center rt:gap-2 rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300 rt:w-full rt:text-left">
+              <i class="fas fa-archive rt:w-4 rt:h-4 rt:text-center rt:flex-shrink-0"></i>
+              <span class="rt:truncate">Archive</span>
             </button>
           </div>
         </nav>
       </aside>
     </div>
 
-    <div class="min-h-screen flex lg:grid lg:grid-cols-[280px_1fr]">
+    <div class="rt:min-h-screen rt:flex rt:lg:grid rt:lg:grid-cols-[280px_1fr]">
       <!-- Sidebar -->
-      <aside class="hidden lg:block border-r border-zinc-800 bg-zinc-900 overflow-y-auto">
+      <aside class="rt:hidden rt:lg:block rt:border-r rt:border-zinc-800 rt:bg-zinc-900 rt:overflow-y-auto">
         <!-- Sidebar content remains the same -->
-        <div class="h-14 flex items-center px-4">
-          <div class="h-8 w-8 rounded-full bg-zinc-700"></div>
-          <span class="ml-3 text-sm font-semibold text-zinc-300">Logo</span>
+        <div class="rt:h-14 rt:flex rt:items-center rt:px-4">
+          <div class="rt:h-8 rt:w-8 rt:rounded-full rt:bg-zinc-700"></div>
+          <span class="rt:ml-3 rt:text-sm rt:font-semibold rt:text-zinc-300">Logo</span>
         </div>
-        <nav class="px-2 py-3 space-y-6 text-sm">
-          <div class="space-y-1">
-            <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px]">Main</div>
-            <a class="flex items-center gap-2 px-2 py-2 rounded-md bg-zinc-800 text-zinc-100" href="#">
-              <i class="fas fa-th-large w-4 h-4 text-center flex-shrink-0"></i>
-              <span class="truncate">My Desk</span>
+        <nav class="rt:px-2 rt:py-3 rt:space-y-6 rt:text-sm">
+          <div class="rt:space-y-1">
+            <div class="rt:px-2 rt:text-zinc-400 rt:uppercase rt:tracking-wide rt:text-[11px]">Main</div>
+            <a class="rt:flex rt:items-center rt:gap-2 rt:px-2 rt:py-2 rt:rounded-md rt:bg-zinc-800 rt:text-zinc-100" href="#">
+              <i class="fas fa-th-large rt:w-4 rt:h-4 rt:text-center rt:flex-shrink-0"></i>
+              <span class="rt:truncate">My Desk</span>
             </a>
-            <a class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">
-              <i class="fas fa-layer-group w-4 h-4 text-center flex-shrink-0"></i>
-              <span class="truncate">Everything</span>
+            <a class="rt:flex rt:items-center rt:gap-2 rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300" href="#">
+              <i class="fas fa-layer-group rt:w-4 rt:h-4 rt:text-center rt:flex-shrink-0"></i>
+              <span class="rt:truncate">Everything</span>
             </a>
           </div>
-          <div class="space-y-1">
-            <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px] flex justify-between items-center">
+          <div class="rt:space-y-1">
+            <div class="rt:px-2 rt:text-zinc-400 rt:uppercase rt:tracking-wide rt:text-[11px] rt:flex rt:justify-between rt:items-center">
               <span>Projects</span>
-              <button data-action="open-new-project-modal" class="w-4 h-4 bg-zinc-600 hover:bg-zinc-500 rounded text-zinc-200 text-xs flex items-center justify-center transition-colors flex-shrink-0">
+              <button data-action="open-new-project-modal" class="rt:w-4 rt:h-4 rt:bg-zinc-600 rt:hover:bg-zinc-500 rt:rounded rt:text-zinc-200 rt:text-xs rt:flex rt:items-center rt:justify-center rt:transition-colors rt:flex-shrink-0">
                 +
               </button>
             </div>
-            <ul class="space-y-1 max-h-80 overflow-y-auto" id="project-list">
+            <ul class="rt:space-y-1 rt:max-h-80 rt:overflow-y-auto" id="project-list">
               <!-- Projects will be dynamically loaded here -->
             </ul>
           </div>
-          <div class="mt-6 space-y-1">
-            <a class="block px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300 truncate" href="#">Need Help</a>
-            <a class="block px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300 truncate" href="#">Settings</a>
-            <button data-action="open-archive-modal" class="w-full text-left px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300 flex items-center gap-2">
-              <i class="fas fa-archive w-4 h-4 text-center flex-shrink-0"></i>
-              <span class="truncate">Archive</span>
+          <div class="rt:mt-6 rt:space-y-1">
+            <a class="rt:block rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300 rt:truncate" href="#">Need Help</a>
+            <a class="rt:block rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300 rt:truncate" href="#">Settings</a>
+            <button data-action="open-archive-modal" class="rt:w-full rt:text-left rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300 rt:flex rt:items-center rt:gap-2">
+              <i class="fas fa-archive rt:w-4 rt:h-4 rt:text-center rt:flex-shrink-0"></i>
+              <span class="rt:truncate">Archive</span>
             </button>
           </div>
         </nav>
       </aside>
 
       <!-- Main -->
-      <main class="flex flex-col flex-1">
+      <main class="rt:flex rt:flex-col rt:flex-1">
         <!-- Board header -->
-        <div class="px-4 lg:px-6 py-4 flex justify-between items-center">
-          <h1 class="hidden lg:block text-lg font-semibold">Everything</h1>
-          <button data-action="open-new-task-modal" class="px-3 py-2 lg:px-4 lg:py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors">
-            <span class="hidden sm:inline">+ Add Task</span>
-            <span class="sm:hidden">+</span>
+        <div class="rt:px-4 rt:lg:px-6 rt:py-4 rt:flex rt:justify-between rt:items-center">
+          <h1 class="rt:hidden rt:lg:block rt:text-lg rt:font-semibold">Everything</h1>
+          <button data-action="open-new-task-modal" class="rt:px-3 rt:py-2 rt:lg:px-4 rt:lg:py-2 rt:bg-blue-600 rt:hover:bg-blue-700 rt:text-white rt:text-sm rt:rounded-lg rt:transition-colors">
+            <span class="rt:hidden rt:sm:inline">+ Add Task</span>
+            <span class="rt:sm:hidden">+</span>
           </button>
         </div>
 
         <!-- Board: responsive columns -->
-        <section class="px-2 lg:px-4 pb-6 overflow-x-auto flex-1">
-          <div class="flex gap-3 lg:gap-4 min-w-max lg:grid lg:auto-cols-[minmax(320px,1fr)] lg:grid-flow-col">
+        <section class="rt:px-2 rt:lg:px-4 rt:pb-6 rt:overflow-x-auto rt:flex-1">
+          <div class="rt:flex rt:gap-3 rt:lg:gap-4 rt:min-w-max rt:lg:grid rt:lg:auto-cols-[minmax(320px,1fr)] rt:lg:grid-flow-col">
             <!-- Up Next -->
-            <div class="bg-zinc-900 w-80 lg:w-auto flex-shrink-0">
-              <div class="sticky top-0 z-10 bg-zinc-900">
-                <h2 class="px-3 py-2 text-sm font-semibold text-zinc-200">
+            <div class="rt:bg-zinc-900 rt:w-80 rt:lg:w-auto rt:flex-shrink-0">
+              <div class="rt:sticky rt:top-0 rt:z-10 rt:bg-zinc-900">
+                <h2 class="rt:px-3 rt:py-2 rt:text-sm rt:font-semibold rt:text-zinc-200">
                   Up Next
-                  <span class="ml-1 rounded bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-400">12</span>
+                  <span class="rt:ml-1 rt:rounded rt:bg-zinc-800 rt:px-2 rt:py-0.5 rt:text-[11px] rt:text-zinc-400">12</span>
                 </h2>
               </div>
-              <div class="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto px-1 custom-scrollbar" data-kanban-column="up-next">
+              <div class="rt:space-y-3 rt:max-h-[calc(100vh-200px)] rt:overflow-y-auto rt:px-1 custom-scrollbar" data-kanban-column="up-next">
                 <!-- Tasks will be dynamically loaded here -->
               </div>
             </div>
 
             <!-- In Progress -->
-            <div class="bg-zinc-900 w-80 lg:w-auto flex-shrink-0">
-              <div class="sticky top-0 z-10 bg-zinc-900">
-                <h2 class="px-3 py-2 text-sm font-semibold text-zinc-200">
+            <div class="rt:bg-zinc-900 rt:w-80 rt:lg:w-auto rt:flex-shrink-0">
+              <div class="rt:sticky rt:top-0 rt:z-10 rt:bg-zinc-900">
+                <h2 class="rt:px-3 rt:py-2 rt:text-sm rt:font-semibold rt:text-zinc-200">
                   In Progress
-                  <span class="ml-1 rounded bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-400">7</span>
+                  <span class="rt:ml-1 rt:rounded rt:bg-zinc-800 rt:px-2 rt:py-0.5 rt:text-[11px] rt:text-zinc-400">7</span>
                 </h2>
               </div>
-              <div class="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto px-1 custom-scrollbar" data-kanban-column="in-progress">
+              <div class="rt:space-y-3 rt:max-h-[calc(100vh-200px)] rt:overflow-y-auto rt:px-1 custom-scrollbar" data-kanban-column="in-progress">
                 <!-- Tasks will be dynamically loaded here -->
               </div>
             </div>
 
             <!-- In Review -->
-            <div class="bg-zinc-900 w-80 lg:w-auto flex-shrink-0">
-              <div class="sticky top-0 z-10 bg-zinc-900">
-                <h2 class="px-3 py-2 text-sm font-semibold text-zinc-200">
+            <div class="rt:bg-zinc-900 rt:w-80 rt:lg:w-auto rt:flex-shrink-0">
+              <div class="rt:sticky rt:top-0 rt:z-10 rt:bg-zinc-900">
+                <h2 class="rt:px-3 rt:py-2 rt:text-sm rt:font-semibold rt:text-zinc-200">
                   In Review
-                  <span class="ml-1 rounded bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-400">9</span>
+                  <span class="rt:ml-1 rt:rounded rt:bg-zinc-800 rt:px-2 rt:py-0.5 rt:text-[11px] rt:text-zinc-400">9</span>
                 </h2>
               </div>
-              <div class="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto px-1 custom-scrollbar" data-kanban-column="in-review">
+              <div class="rt:space-y-3 rt:max-h-[calc(100vh-200px)] rt:overflow-y-auto rt:px-1 custom-scrollbar" data-kanban-column="in-review">
                 <!-- Tasks will be dynamically loaded here -->
               </div>
             </div>
@@ -167,50 +167,50 @@
     </div>
 
     <!-- Mobile Sidebar Overlay -->
-    <div id="mobile-sidebar" class="fixed inset-0 z-50 lg:hidden transform -translate-x-full transition-transform duration-300 ease-in-out">
-      <div class="flex">
+    <div id="mobile-sidebar" class="rt:fixed rt:inset-0 rt:z-50 rt:lg:hidden rt:transform rt:-translate-x-full rt:transition-transform rt:duration-300 rt:ease-in-out">
+      <div class="rt:flex">
         <!-- Backdrop -->
-        <div class="fixed inset-0 bg-black bg-opacity-50" id="mobile-backdrop"></div>
+        <div class="rt:fixed rt:inset-0 rt:bg-black rt:bg-opacity-50" id="mobile-backdrop"></div>
         
         <!-- Sidebar -->
-        <aside class="relative bg-zinc-900 w-80 h-full overflow-y-auto border-r border-zinc-800">
-          <div class="h-14 flex items-center justify-between px-4">
-            <div class="flex items-center">
-              <div class="h-8 w-8 rounded-full bg-zinc-700"></div>
-              <span class="ml-3 text-sm font-semibold text-zinc-300">Logo</span>
+        <aside class="rt:relative rt:bg-zinc-900 rt:w-80 rt:h-full rt:overflow-y-auto rt:border-r rt:border-zinc-800">
+          <div class="rt:h-14 rt:flex rt:items-center rt:justify-between rt:px-4">
+            <div class="rt:flex rt:items-center">
+              <div class="rt:h-8 rt:w-8 rt:rounded-full rt:bg-zinc-700"></div>
+              <span class="rt:ml-3 rt:text-sm rt:font-semibold rt:text-zinc-300">Logo</span>
             </div>
-            <button id="close-mobile-menu" class="p-2 rounded-md hover:bg-zinc-800">
+            <button id="close-mobile-menu" class="rt:p-2 rt:rounded-md rt:hover:bg-zinc-800">
               <i class="fas fa-times"></i>
             </button>
           </div>
-          <nav class="px-2 py-3 space-y-6 text-sm">
-            <div class="space-y-1">
-              <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px]">Main</div>
-              <a class="flex items-center gap-2 px-2 py-2 rounded-md bg-zinc-800 text-zinc-100" href="#">
-                <i class="fas fa-th-large w-4 h-4 text-center"></i>
+          <nav class="rt:px-2 rt:py-3 rt:space-y-6 rt:text-sm">
+            <div class="rt:space-y-1">
+              <div class="rt:px-2 rt:text-zinc-400 rt:uppercase rt:tracking-wide rt:text-[11px]">Main</div>
+              <a class="rt:flex rt:items-center rt:gap-2 rt:px-2 rt:py-2 rt:rounded-md rt:bg-zinc-800 rt:text-zinc-100" href="#">
+                <i class="fas fa-th-large rt:w-4 rt:h-4 rt:text-center"></i>
                 My Desk
               </a>
-              <a class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">
-                <i class="fas fa-layer-group w-4 h-4 text-center"></i>
+              <a class="rt:flex rt:items-center rt:gap-2 rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300" href="#">
+                <i class="fas fa-layer-group rt:w-4 rt:h-4 rt:text-center"></i>
                 Everything
               </a>
             </div>
-            <div class="space-y-1">
-              <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px] flex justify-between items-center">
+            <div class="rt:space-y-1">
+              <div class="rt:px-2 rt:text-zinc-400 rt:uppercase rt:tracking-wide rt:text-[11px] rt:flex rt:justify-between rt:items-center">
                 <span>Projects</span>
-                <button data-action="open-new-project-modal" class="w-4 h-4 bg-zinc-600 hover:bg-zinc-500 rounded text-zinc-200 text-xs flex items-center justify-center transition-colors">
+                <button data-action="open-new-project-modal" class="rt:w-4 rt:h-4 rt:bg-zinc-600 rt:hover:bg-zinc-500 rt:rounded rt:text-zinc-200 rt:text-xs rt:flex rt:items-center rt:justify-center rt:transition-colors">
                   +
                 </button>
               </div>
-              <ul class="space-y-1 max-h-60 overflow-y-auto" id="mobile-project-list">
+              <ul class="rt:space-y-1 rt:max-h-60 rt:overflow-y-auto" id="mobile-project-list">
                 <!-- Projects will be dynamically loaded here -->
               </ul>
             </div>
-            <div class="mt-6 space-y-1">
-              <a class="block px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">Need Help</a>
-              <a class="block px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">Settings</a>
-              <button data-action="open-archive-modal" class="w-full text-left px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300 flex items-center gap-2">
-                <i class="fas fa-archive w-4 h-4 text-center"></i>
+            <div class="rt:mt-6 rt:space-y-1">
+              <a class="rt:block rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300" href="#">Need Help</a>
+              <a class="rt:block rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300" href="#">Settings</a>
+              <button data-action="open-archive-modal" class="rt:w-full rt:text-left rt:px-2 rt:py-2 rt:rounded-md rt:hover:bg-zinc-800 rt:text-zinc-300 rt:flex rt:items-center rt:gap-2">
+                <i class="fas fa-archive rt:w-4 rt:h-4 rt:text-center"></i>
                 Archive
               </button>
             </div>
@@ -222,20 +222,20 @@
     <!-- New Task Modal -->
     <div id="newTaskModal" class="modal-overlay">
       <div class="modal-content">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-semibold text-zinc-100">Add New Task</h2>
-          <button data-action="close-new-task-modal" class="text-zinc-400 hover:text-zinc-200 text-xl">×</button>
+        <div class="rt:flex rt:justify-between rt:items-center rt:mb-6">
+          <h2 class="rt:text-xl rt:font-semibold rt:text-zinc-100">Add New Task</h2>
+          <button data-action="close-new-task-modal" class="rt:text-zinc-400 rt:hover:text-zinc-200 rt:text-xl">×</button>
         </div>
         
-        <form id="newTaskForm" class="space-y-4">
+        <form id="newTaskForm" class="rt:space-y-4">
           <div>
-            <label class="block text-sm font-medium text-zinc-300 mb-2">Task Title</label>
-            <input type="text" id="taskTitle" required class="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:border-blue-500">
+            <label class="rt:block rt:text-sm rt:font-medium rt:text-zinc-300 rt:mb-2">Task Title</label>
+            <input type="text" id="taskTitle" required class="rt:w-full rt:px-3 rt:py-2 rt:bg-zinc-800 rt:border rt:border-zinc-700 rt:rounded-lg rt:text-zinc-100 rt:focus:outline-none rt:focus:border-blue-500">
           </div>
           
           <div>
-            <label class="block text-sm font-medium text-zinc-300 mb-2">Column</label>
-            <select id="taskColumn" required class="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:border-blue-500">
+            <label class="rt:block rt:text-sm rt:font-medium rt:text-zinc-300 rt:mb-2">Column</label>
+            <select id="taskColumn" required class="rt:w-full rt:px-3 rt:py-2 rt:bg-zinc-800 rt:border rt:border-zinc-700 rt:rounded-lg rt:text-zinc-100 rt:focus:outline-none rt:focus:border-blue-500">
               <option value="up-next">Up Next</option>
               <option value="in-progress">In Progress</option>
               <option value="in-review">In Review</option>
@@ -243,25 +243,25 @@
           </div>
           
           <div>
-            <label class="block text-sm font-medium text-zinc-300 mb-2">Assignee</label>
-            <input type="text" id="taskAssignee" placeholder="Enter assignee name" class="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:border-blue-500">
+            <label class="rt:block rt:text-sm rt:font-medium rt:text-zinc-300 rt:mb-2">Assignee</label>
+            <input type="text" id="taskAssignee" placeholder="Enter assignee name" class="rt:w-full rt:px-3 rt:py-2 rt:bg-zinc-800 rt:border rt:border-zinc-700 rt:rounded-lg rt:text-zinc-100 rt:focus:outline-none rt:focus:border-blue-500">
           </div>
           
           <div>
-            <label class="block text-sm font-medium text-zinc-300 mb-2">Project</label>
-            <select id="taskProject" class="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:border-blue-500">
+            <label class="rt:block rt:text-sm rt:font-medium rt:text-zinc-300 rt:mb-2">Project</label>
+            <select id="taskProject" class="rt:w-full rt:px-3 rt:py-2 rt:bg-zinc-800 rt:border rt:border-zinc-700 rt:rounded-lg rt:text-zinc-100 rt:focus:outline-none rt:focus:border-blue-500">
               <!-- Projects will be populated dynamically -->
             </select>
           </div>
           
           <div>
-            <label class="block text-sm font-medium text-zinc-300 mb-2">Time Estimate</label>
-            <input type="text" id="taskTime" placeholder="e.g., 5h, 2d" class="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:border-blue-500">
+            <label class="rt:block rt:text-sm rt:font-medium rt:text-zinc-300 rt:mb-2">Time Estimate</label>
+            <input type="text" id="taskTime" placeholder="e.g., 5h, 2d" class="rt:w-full rt:px-3 rt:py-2 rt:bg-zinc-800 rt:border rt:border-zinc-700 rt:rounded-lg rt:text-zinc-100 rt:focus:outline-none rt:focus:border-blue-500">
           </div>
           
           <div>
-            <label class="block text-sm font-medium text-zinc-300 mb-2">Status</label>
-            <select id="taskStatus" class="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:border-blue-500">
+            <label class="rt:block rt:text-sm rt:font-medium rt:text-zinc-300 rt:mb-2">Status</label>
+            <select id="taskStatus" class="rt:w-full rt:px-3 rt:py-2 rt:bg-zinc-800 rt:border rt:border-zinc-700 rt:rounded-lg rt:text-zinc-100 rt:focus:outline-none rt:focus:border-blue-500">
               <option value="">No Status</option>
               <option value="blocked">Blocked</option>
               <option value="paused">Paused</option>
@@ -270,11 +270,11 @@
             </select>
           </div>
           
-          <div class="flex justify-end space-x-3 pt-4">
-            <button type="button" data-action="close-new-task-modal" class="px-4 py-2 text-zinc-300 hover:text-zinc-100 transition-colors">
+          <div class="rt:flex rt:justify-end rt:space-x-3 rt:pt-4">
+            <button type="button" data-action="close-new-task-modal" class="rt:px-4 rt:py-2 rt:text-zinc-300 rt:hover:text-zinc-100 rt:transition-colors">
               Cancel
             </button>
-            <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+            <button type="submit" class="rt:px-4 rt:py-2 rt:bg-blue-600 rt:hover:bg-blue-700 rt:text-white rt:rounded-lg rt:transition-colors">
               Add Task
             </button>
           </div>
@@ -285,20 +285,20 @@
     <!-- New Project Modal -->
     <div id="newProjectModal" class="modal-overlay">
       <div class="modal-content">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-semibold text-zinc-100">Add New Project</h2>
-          <button data-action="close-new-project-modal" class="text-zinc-400 hover:text-zinc-200 text-xl">×</button>
+        <div class="rt:flex rt:justify-between rt:items-center rt:mb-6">
+          <h2 class="rt:text-xl rt:font-semibold rt:text-zinc-100">Add New Project</h2>
+          <button data-action="close-new-project-modal" class="rt:text-zinc-400 rt:hover:text-zinc-200 rt:text-xl">×</button>
         </div>
         
-        <form id="newProjectForm" class="space-y-4">
+        <form id="newProjectForm" class="rt:space-y-4">
           <div>
-            <label class="block text-sm font-medium text-zinc-300 mb-2">Project Name</label>
-            <input type="text" id="projectName" required class="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:border-blue-500">
+            <label class="rt:block rt:text-sm rt:font-medium rt:text-zinc-300 rt:mb-2">Project Name</label>
+            <input type="text" id="projectName" required class="rt:w-full rt:px-3 rt:py-2 rt:bg-zinc-800 rt:border rt:border-zinc-700 rt:rounded-lg rt:text-zinc-100 rt:focus:outline-none rt:focus:border-blue-500">
           </div>
           
           <div>
-            <label class="block text-sm font-medium text-zinc-300 mb-2">Color Theme</label>
-            <select id="projectColor" class="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:border-blue-500">
+            <label class="rt:block rt:text-sm rt:font-medium rt:text-zinc-300 rt:mb-2">Color Theme</label>
+            <select id="projectColor" class="rt:w-full rt:px-3 rt:py-2 rt:bg-zinc-800 rt:border rt:border-zinc-700 rt:rounded-lg rt:text-zinc-100 rt:focus:outline-none rt:focus:border-blue-500">
               <option value="blue">Blue</option>
               <option value="purple">Purple</option>
               <option value="green">Green</option>
@@ -314,11 +314,11 @@
           
 
           
-          <div class="flex justify-end space-x-3 pt-4">
-            <button type="button" data-action="close-new-project-modal" class="px-4 py-2 text-zinc-300 hover:text-zinc-100 transition-colors">
+          <div class="rt:flex rt:justify-end rt:space-x-3 rt:pt-4">
+            <button type="button" data-action="close-new-project-modal" class="rt:px-4 rt:py-2 rt:text-zinc-300 rt:hover:text-zinc-100 rt:transition-colors">
               Cancel
             </button>
-            <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+            <button type="submit" class="rt:px-4 rt:py-2 rt:bg-blue-600 rt:hover:bg-blue-700 rt:text-white rt:rounded-lg rt:transition-colors">
               Add Project
             </button>
           </div>
@@ -328,18 +328,18 @@
     
     <!-- Archive Modal -->
     <div id="archiveModal" class="modal-overlay">
-      <div class="modal-content max-w-4xl">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-semibold text-zinc-100">Archived Tasks</h2>
-          <button data-action="close-archive-modal" class="text-zinc-400 hover:text-zinc-200 text-xl">×</button>
+      <div class="modal-content rt:max-w-4xl">
+        <div class="rt:flex rt:justify-between rt:items-center rt:mb-6">
+          <h2 class="rt:text-xl rt:font-semibold rt:text-zinc-100">Archived Tasks</h2>
+          <button data-action="close-archive-modal" class="rt:text-zinc-400 rt:hover:text-zinc-200 rt:text-xl">×</button>
         </div>
         
-        <div id="archivedTasksList" class="space-y-3 max-h-96 overflow-y-auto">
+        <div id="archivedTasksList" class="rt:space-y-3 rt:max-h-96 rt:overflow-y-auto">
           <!-- Archived tasks will be loaded here -->
         </div>
         
-        <div class="flex justify-end space-x-3 pt-4 border-t border-zinc-700 mt-6">
-          <button data-action="close-archive-modal" class="px-4 py-2 text-zinc-300 hover:text-zinc-100 transition-colors">
+        <div class="rt:flex rt:justify-end rt:space-x-3 rt:pt-4 rt:border-t rt:border-zinc-700 rt:mt-6">
+          <button data-action="close-archive-modal" class="rt:px-4 rt:py-2 rt:text-zinc-300 rt:hover:text-zinc-100 rt:transition-colors">
             Close
           </button>
         </div>

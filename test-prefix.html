@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test RT Prefix</title>
+    <style>
+        @import "tailwindcss" prefix(rt);
+    </style>
+</head>
+<body>
+    <div class="rt:bg-red-500 rt:text-white rt:p-4 rt:rounded">
+        This should have a red background with white text if the rt: prefix is working correctly.
+    </div>
+    <div class="bg-blue-500 text-white p-4 rounded">
+        This should NOT be styled since it doesn't have the rt: prefix.
+    </div>
+</body>
+</html>

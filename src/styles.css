@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "tailwindcss" prefix(rt);
 @plugin "daisyui";
 
 @plugin "daisyui/theme" {
