@@ -1,0 +1,123 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@plugin "daisyui/theme" {
+  name: "zinc-night";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+
+  /* Base layers */
+  --color-base-100: oklch(14% 0.015 265); /* zinc-950 */
+  --color-base-200: oklch(18% 0.018 265); /* zinc-900 */
+  --color-base-300: oklch(22% 0.020 265); /* zinc-800 */
+  --color-base-content: oklch(96% 0.004 265); /* near white */
+
+  /* Core actions (all neutral, minimal contrast) */
+  --color-primary: oklch(28% 0.022 265);   /* zinc-700 */
+  --color-primary-content: oklch(96% 0.004 265);
+
+  --color-secondary: oklch(24% 0.020 265); /* zinc-800 */
+  --color-secondary-content: oklch(96% 0.004 265);
+
+  --color-accent: oklch(32% 0.025 265);    /* zinc-600 */
+  --color-accent-content: oklch(96% 0.004 265);
+
+  --color-neutral: oklch(18% 0.018 265);   /* zinc-900 */
+  --color-neutral-content: oklch(94% 0.005 265);
+
+  /* Semantic colors (kept subtle, same family) */
+  --color-info: oklch(38% 0.030 265);      /* soft bluish zinc */
+  --color-info-content: oklch(96% 0.004 265);
+
+  --color-success: oklch(36% 0.028 265);
+  --color-success-content: oklch(95% 0.004 265);
+
+  --color-warning: oklch(40% 0.032 265);
+  --color-warning-content: oklch(95% 0.004 265);
+
+  --color-error: oklch(28% 0.025 265);
+  --color-error-content: oklch(96% 0.004 265);
+
+  /* Minimalist shapes */
+  --radius-selector: 0.25rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+
+.sortable-ghost {
+  opacity: 0.4;
+}
+
+.sortable-chosen {
+  transform: scale(1.02);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.sortable-drag {
+  transform: rotate(3deg);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Task card styles for drag and drop */
+[data-kanban-task] {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+[data-kanban-task]:active {
+  cursor: grabbing;
+}
+
+[data-kanban-task] * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 200ms;
+  display: none;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.95);
+  transition: transform 200ms;
+}
+
+.modal-overlay.show .modal-content {
+  transform: scale(1);
+}
