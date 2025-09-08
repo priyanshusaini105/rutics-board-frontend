@@ -1,4 +1,5 @@
 import './styles.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import Sortable from 'sortablejs';
 
 // Dynamic Kanban Board with JSON Data Management
@@ -26,7 +27,12 @@ class KanbanBoard {
     const stored = localStorage.getItem(this.storageKey);
     if (stored) {
       try {
-        return JSON.parse(stored);
+        const data = JSON.parse(stored);
+        // Ensure archived tasks array exists
+        if (!data.archivedTasks) {
+          data.archivedTasks = [];
+        }
+        return data;
       } catch (e) {
         console.error('Error parsing stored data:', e);
         return this.getDefaultData();
@@ -54,6 +60,7 @@ class KanbanBoard {
         { id: 'launchpad', name: 'LaunchPad', starred: false, color: 'violet' },
         { id: 'rev', name: 'Rev', starred: false, color: 'red' }
       ],
+      archivedTasks: [],
       columns: {
         'up-next': {
           id: 'up-next',
@@ -66,6 +73,7 @@ class KanbanBoard {
               project: 'Mast',
               projectColor: 'fuchsia',
               time: '20h',
+              status: 'blocked',
               avatar: 'https://picsum.photos/20?6'
             },
             {
@@ -75,6 +83,7 @@ class KanbanBoard {
               project: 'Bluejay',
               projectColor: 'blue',
               time: '15h',
+              status: 'paused',
               avatar: 'https://picsum.photos/20?1'
             },
             {
@@ -102,6 +111,7 @@ class KanbanBoard {
               project: 'Figmate',
               projectColor: 'orange',
               time: '25h',
+              status: 'cancelled',
               avatar: 'https://picsum.photos/20?4'
             }
           ]
@@ -126,6 +136,7 @@ class KanbanBoard {
               project: 'Mast',
               projectColor: 'fuchsia',
               time: '10h',
+              status: 'done',
               avatar: 'https://picsum.photos/20?8'
             }
           ]
@@ -141,6 +152,7 @@ class KanbanBoard {
               project: 'Highlight',
               projectColor: 'cyan',
               hasApproval: true,
+              status: 'done',
               avatar: 'https://picsum.photos/20?9'
             },
             {
@@ -159,6 +171,7 @@ class KanbanBoard {
               project: 'Rev',
               projectColor: 'red',
               hasApproval: true,
+              status: 'blocked',
               avatar: 'https://picsum.photos/20?11'
             }
           ]
@@ -188,7 +201,38 @@ class KanbanBoard {
       'pink': 'bg-pink-700/40 text-pink-300'
     };
 
+    // Status badge mapping
+    const statusMap: { [key: string]: { class: string; text: string; icon: string } } = {
+      'blocked': { class: 'bg-red-900/50 text-red-300 border-red-800/60', text: 'Blocked', icon: 'fas fa-ban' },
+      'paused': { class: 'bg-yellow-900/50 text-yellow-300 border-yellow-800/60', text: 'Paused', icon: 'fas fa-pause' },
+      'cancelled': { class: 'bg-gray-900/50 text-gray-400 border-gray-800/60', text: 'Cancelled', icon: 'fas fa-times' },
+      'done': { class: 'bg-green-900/50 text-green-300 border-green-800/60', text: 'Done', icon: 'fas fa-check' }
+    };
+
     const projectColorClass = colorMap[task.projectColor] || 'bg-gray-700/40 text-gray-300';
+
+    // Create status badge and archive button row
+    const statusRow = task.status && statusMap[task.status] ? `
+      <div class="mb-2 flex items-center justify-between">
+        <span class="inline-flex items-center gap-1 rounded border ${statusMap[task.status].class} px-2 py-0.5 text-[10px] font-medium cursor-pointer hover:opacity-80 transition-opacity" data-action="toggle-status" data-task-id="${task.id}">
+          <i class="${statusMap[task.status].icon} text-xs"></i>
+          ${statusMap[task.status].text}
+        </span>
+        <button data-action="archive-task" data-task-id="${task.id}" class="p-1 hover:bg-red-700/20 hover:text-red-400 rounded transition-all duration-200" title="Archive task">
+          <i class="fas fa-archive text-zinc-500 hover:text-red-400 text-sm"></i>
+        </button>
+      </div>
+    ` : `
+      <div class="mb-2 flex items-center justify-between">
+        <span class="inline-flex items-center gap-1 rounded border bg-zinc-800/60 text-zinc-400 border-zinc-700/60 px-2 py-0.5 text-[10px] font-medium cursor-pointer hover:bg-zinc-700/60 transition-colors" data-action="set-status" data-task-id="${task.id}">
+          <i class="fas fa-plus text-xs"></i>
+          Status
+        </span>
+        <button data-action="archive-task" data-task-id="${task.id}" class="p-1 hover:bg-red-700/20 hover:text-red-400 rounded transition-all duration-200" title="Archive task">
+          <i class="fas fa-archive text-zinc-500 hover:text-red-400 text-sm"></i>
+        </button>
+      </div>
+    `;
 
     // Create approval button for review tasks
     const approvalButton = task.hasApproval ? `
@@ -203,9 +247,12 @@ class KanbanBoard {
     const timeDisplay = task.time ? `<span class="text-[11px] text-zinc-400">${task.time}</span>` : '';
 
     article.innerHTML = `
-      <header class="flex items-start justify-between">
-        <h3 class="text-sm font-medium">${task.title}</h3>
-        ${timeDisplay}
+      ${statusRow}
+      <header class="flex items-start justify-between group">
+        <h3 class="text-sm font-medium pr-2">${task.title}</h3>
+        <div class="flex items-center gap-1">
+          ${timeDisplay}
+        </div>
       </header>
       ${approvalButton}
       <footer class="mt-2 flex items-center justify-between">
@@ -232,22 +279,46 @@ class KanbanBoard {
     this.data.projects.forEach((project: any) => {
       const li = document.createElement('li');
       
-      if (project.starred) {
-        li.innerHTML = `
-          <a class="flex items-center justify-between px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#" data-project-id="${project.id}">
+      li.innerHTML = `
+        <div class="group flex items-center justify-between px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300">
+          <a class="flex items-center gap-2 truncate cursor-pointer" href="#" data-project-id="${project.id}">
             <span class="truncate">${project.name}</span>
-            <span class="text-amber-400">★</span>
           </a>
-        `;
-      } else {
-        li.innerHTML = `
-          <a class="block px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#" data-project-id="${project.id}">
-            ${project.name}
-          </a>
-        `;
-      }
+          <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button class="project-star-btn p-1 hover:bg-zinc-700 rounded" data-project-id="${project.id}" title="${project.starred ? 'Unstar project' : 'Star project'}">
+              <i class="fas fa-star text-xs ${project.starred ? 'text-amber-400' : 'text-zinc-500'}"></i>
+            </button>
+            <button class="project-delete-btn p-1 hover:bg-red-600 rounded" data-project-id="${project.id}" title="Delete project">
+              <i class="fas fa-trash text-xs text-zinc-500 hover:text-white"></i>
+            </button>
+          </div>
+        </div>
+      `;
 
       projectList.appendChild(li);
+    });
+
+    // Add event listeners for star and delete buttons
+    document.querySelectorAll('.project-star-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const projectId = (e.currentTarget as HTMLElement).getAttribute('data-project-id');
+        if (projectId) {
+          this.toggleProjectStar(projectId);
+        }
+      });
+    });
+
+    document.querySelectorAll('.project-delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const projectId = (e.currentTarget as HTMLElement).getAttribute('data-project-id');
+        if (projectId) {
+          this.deleteProject(projectId);
+        }
+      });
     });
 
     console.log('Projects rendered in sidebar');
@@ -262,6 +333,48 @@ class KanbanBoard {
       this.renderProjects();
       console.log(`Project ${project.name} star toggled to ${project.starred}`);
     }
+  }
+
+  // Delete project
+  deleteProject(projectId: string) {
+    const projectIndex = this.data.projects.findIndex((p: any) => p.id === projectId);
+    if (projectIndex === -1) return;
+
+    const project = this.data.projects[projectIndex];
+    
+    // Show confirmation dialog
+    const confirmed = confirm(`Are you sure you want to delete the project "${project.name}"?\n\nThis action cannot be undone and will remove the project from all tasks.`);
+    
+    if (!confirmed) {
+      return; // User cancelled
+    }
+
+    // Remove project from the projects array
+    this.data.projects.splice(projectIndex, 1);
+
+    // Update any tasks that were assigned to this project to have no project
+    Object.keys(this.data.columns).forEach(columnId => {
+      const column = this.data.columns[columnId];
+      column.tasks.forEach((task: any) => {
+        if (task.project === project.name) {
+          task.project = '';
+        }
+      });
+    });
+
+    // Also update archived tasks if they exist
+    if (this.data.archivedTasks) {
+      this.data.archivedTasks.forEach((task: any) => {
+        if (task.project === project.name) {
+          task.project = '';
+        }
+      });
+    }
+
+    this.saveData();
+    this.renderProjects();
+    this.renderAllTasks(); // Re-render tasks to update project displays
+    console.log(`Project "${project.name}" deleted`);
   }
 
   // Render all tasks in all columns
@@ -376,6 +489,168 @@ class KanbanBoard {
     console.log(`Task ${taskId} approved`);
     // You can implement moving to a "done" column or removing the task
     this.removeTask(taskId);
+  }
+
+  // Update task status
+  updateTaskStatus(taskId: string, newStatus: string | null) {
+    // Find the task in any column
+    let foundTask: any = null;
+    let foundColumnId = null;
+
+    Object.keys(this.data.columns).forEach(columnId => {
+      const column = this.data.columns[columnId];
+      const taskIndex = column.tasks.findIndex((task: any) => task.id === taskId);
+      if (taskIndex !== -1) {
+        foundTask = column.tasks[taskIndex];
+        foundColumnId = columnId;
+      }
+    });
+
+    if (foundTask && foundColumnId) {
+      if (newStatus) {
+        foundTask.status = newStatus;
+      } else {
+        delete foundTask.status;
+      }
+      
+      this.saveData();
+      this.renderColumnTasks(foundColumnId);
+      console.log(`Task "${foundTask.title}" status updated to: ${newStatus || 'No Status'}`);
+    }
+  }
+
+  // Get available statuses
+  getAvailableStatuses() {
+    return [
+      { value: '', label: 'No Status', icon: '' },
+      { value: 'blocked', label: 'Blocked', icon: 'fas fa-ban' },
+      { value: 'paused', label: 'Paused', icon: 'fas fa-pause' },
+      { value: 'cancelled', label: 'Cancelled', icon: 'fas fa-times' },
+      { value: 'done', label: 'Done', icon: 'fas fa-check' }
+    ];
+  }
+
+  // Archive task
+  archiveTask(taskId: string) {
+    // Find the task in any column
+    let foundTask: any = null;
+    let foundColumnId = null;
+
+    Object.keys(this.data.columns).forEach(columnId => {
+      const column = this.data.columns[columnId];
+      const taskIndex = column.tasks.findIndex((task: any) => task.id === taskId);
+      if (taskIndex !== -1) {
+        foundTask = column.tasks[taskIndex];
+        foundColumnId = columnId;
+      }
+    });
+
+    if (foundTask && foundColumnId) {
+      // Show confirmation dialog
+      const confirmed = confirm(`Are you sure you want to archive "${foundTask.title}"?\n\nThis will move the task to your archive where you can restore it later.`);
+      
+      if (!confirmed) {
+        return; // User cancelled
+      }
+
+      // Remove from current column
+      const column = this.data.columns[foundColumnId];
+      const taskIndex = column.tasks.findIndex((task: any) => task.id === taskId);
+      const taskToArchive = column.tasks.splice(taskIndex, 1)[0];
+      
+      // Add archived timestamp
+      taskToArchive.archivedAt = new Date().toISOString();
+      taskToArchive.archivedFrom = foundColumnId;
+      
+      // Ensure archived tasks array exists
+      if (!this.data.archivedTasks) {
+        this.data.archivedTasks = [];
+      }
+      
+      // Add to archived tasks
+      this.data.archivedTasks.push(taskToArchive);
+      
+      this.saveData();
+      this.renderColumnTasks(foundColumnId);
+      this.updateAllColumnCounts();
+      
+      console.log(`Task "${taskToArchive.title}" archived from ${foundColumnId}`);
+      
+      // Show confirmation
+      this.showNotification(`Task "${taskToArchive.title}" has been archived`, 'success');
+    }
+  }
+
+  // Restore task from archive
+  restoreTask(taskId: string, targetColumnId?: string) {
+    if (!this.data.archivedTasks) return;
+
+    const taskIndex = this.data.archivedTasks.findIndex((task: any) => task.id === taskId);
+    if (taskIndex === -1) return;
+
+    const task = this.data.archivedTasks.splice(taskIndex, 1)[0];
+    
+    // Remove archive metadata
+    const originalColumn = task.archivedFrom || 'up-next';
+    delete task.archivedAt;
+    delete task.archivedFrom;
+    
+    // Restore to specified column or original column
+    const restoreToColumn = targetColumnId || originalColumn;
+    
+    if (this.data.columns[restoreToColumn]) {
+      this.data.columns[restoreToColumn].tasks.push(task);
+      this.saveData();
+      this.renderColumnTasks(restoreToColumn);
+      this.updateAllColumnCounts();
+      
+      console.log(`Task "${task.title}" restored to ${restoreToColumn}`);
+      this.showNotification(`Task "${task.title}" restored`, 'success');
+    }
+  }
+
+  // Get archived tasks
+  getArchivedTasks() {
+    return this.data.archivedTasks || [];
+  }
+
+  // Permanently delete archived task
+  deleteArchivedTask(taskId: string) {
+    if (!this.data.archivedTasks) return;
+
+    const taskIndex = this.data.archivedTasks.findIndex((task: any) => task.id === taskId);
+    if (taskIndex !== -1) {
+      const deletedTask = this.data.archivedTasks.splice(taskIndex, 1)[0];
+      this.saveData();
+      console.log(`Task "${deletedTask.title}" permanently deleted`);
+      this.showNotification(`Task "${deletedTask.title}" permanently deleted`, 'info');
+    }
+  }
+
+  // Show notification
+  showNotification(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform translate-x-full ${
+      type === 'success' ? 'bg-green-600 text-white' :
+      type === 'error' ? 'bg-red-600 text-white' :
+      'bg-blue-600 text-white'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Slide in
+    setTimeout(() => {
+      notification.classList.remove('translate-x-full');
+    }, 10);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.classList.add('translate-x-full');
+      setTimeout(() => {
+        notification.remove();
+      }, 300);
+    }, 3000);
   }
 
   // Add new project
@@ -522,6 +797,141 @@ function closeNewProjectModal() {
   form?.reset();
 }
 
+function openArchiveModal() {
+  const modal = document.getElementById('archiveModal');
+  modal?.classList.add('show');
+  renderArchivedTasks();
+}
+
+function closeArchiveModal() {
+  const modal = document.getElementById('archiveModal');
+  modal?.classList.remove('show');
+}
+
+function renderArchivedTasks() {
+  const container = document.getElementById('archivedTasksList');
+  if (!container) return;
+
+  const archivedTasks = kanban.getArchivedTasks();
+  
+  if (archivedTasks.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-8 text-zinc-400">
+        <i class="fas fa-archive text-4xl mb-4 opacity-50"></i>
+        <p>No archived tasks</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = archivedTasks.map((task: any) => {
+    const archivedDate = new Date(task.archivedAt).toLocaleDateString();
+    const statusBadge = task.status ? `
+      <span class="inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[10px] font-medium ${getStatusBadgeClass(task.status)}">
+        <i class="${getStatusIcon(task.status)}"></i> ${task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+      </span>
+    ` : '';
+
+    return `
+      <div class="bg-zinc-800/60 border border-zinc-700 rounded-lg p-4">
+        <div class="flex justify-between items-start mb-2">
+          <div class="flex-1">
+            <h3 class="font-medium text-zinc-100 mb-1">${task.title}</h3>
+            ${statusBadge}
+          </div>
+          <div class="flex gap-2 ml-4">
+            <button data-action="restore-task" data-task-id="${task.id}" class="px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors">
+              Restore
+            </button>
+            <button data-action="delete-archived-task" data-task-id="${task.id}" class="px-2 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded transition-colors">
+              Delete
+            </button>
+          </div>
+        </div>
+        <div class="flex justify-between items-center text-xs text-zinc-400">
+          <div class="flex items-center gap-4">
+            <span><i class="fas fa-user"></i> ${task.assignee}</span>
+            <span><i class="fas fa-folder"></i> ${task.project}</span>
+            ${task.time ? `<span><i class="fas fa-clock"></i> ${task.time}</span>` : ''}
+          </div>
+          <div>
+            <span>Archived ${archivedDate}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function getStatusBadgeClass(status: string) {
+  const statusMap: { [key: string]: string } = {
+    'blocked': 'bg-red-900/50 text-red-300 border-red-800/60',
+    'paused': 'bg-yellow-900/50 text-yellow-300 border-yellow-800/60',
+    'cancelled': 'bg-gray-900/50 text-gray-400 border-gray-800/60',
+    'done': 'bg-green-900/50 text-green-300 border-green-800/60'
+  };
+  return statusMap[status] || 'bg-zinc-700/40 text-zinc-300';
+}
+
+function getStatusIcon(status: string) {
+  const iconMap: { [key: string]: string } = {
+    'blocked': 'fas fa-ban',
+    'paused': 'fas fa-pause',
+    'cancelled': 'fas fa-times',
+    'done': 'fas fa-check'
+  };
+  return iconMap[status] || '';
+}
+
+// Status Menu Functions
+function showStatusMenu(taskId: string, targetElement: HTMLElement) {
+  // Remove existing status menus
+  const existingMenu = document.querySelector('.status-menu');
+  if (existingMenu) {
+    existingMenu.remove();
+  }
+
+  const statuses = kanban.getAvailableStatuses();
+  
+  // Create status menu
+  const menu = document.createElement('div');
+  menu.className = 'status-menu absolute z-50 bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg p-1 min-w-[120px]';
+  
+  statuses.forEach(status => {
+    const button = document.createElement('button');
+    button.className = 'w-full text-left px-2 py-1.5 text-xs rounded hover:bg-zinc-700 text-zinc-300 flex items-center gap-2';
+    button.innerHTML = `
+      ${status.icon ? `<i class="${status.icon}"></i>` : ''}
+      <span>${status.label}</span>
+    `;
+    button.addEventListener('click', () => {
+      kanban.updateTaskStatus(taskId, status.value || null);
+      menu.remove();
+    });
+    menu.appendChild(button);
+  });
+
+  // Position the menu near the target element
+  const rect = targetElement.getBoundingClientRect();
+  menu.style.left = `${rect.left}px`;
+  menu.style.top = `${rect.bottom + 5}px`;
+  
+  document.body.appendChild(menu);
+
+  // Close menu when clicking outside
+  const closeMenu = (e: MouseEvent) => {
+    if (!menu.contains(e.target as Node)) {
+      menu.remove();
+      document.removeEventListener('click', closeMenu);
+    }
+  };
+  
+  // Add the event listener after a small delay to prevent immediate closure
+  setTimeout(() => {
+    document.addEventListener('click', closeMenu);
+  }, 10);
+}
+
 // Form Submission Handlers
 function handleNewTaskSubmit(event: Event) {
   event.preventDefault();
@@ -531,12 +941,14 @@ function handleNewTaskSubmit(event: Event) {
   const taskProject = document.getElementById('taskProject') as HTMLSelectElement;
   const taskTime = document.getElementById('taskTime') as HTMLInputElement;
   const taskColumn = document.getElementById('taskColumn') as HTMLSelectElement;
+  const taskStatus = document.getElementById('taskStatus') as HTMLSelectElement;
   
   const formData = {
     title: taskTitle.value.trim(),
     assignee: taskAssignee.value.trim() || 'Unassigned',
     project: taskProject.value,
     time: taskTime.value.trim(),
+    status: taskStatus.value || undefined,
   };
   
   const columnId = taskColumn.value;
@@ -555,6 +967,7 @@ function handleNewTaskSubmit(event: Event) {
     project: project ? project.name : 'General',
     projectColor: project ? project.color : 'gray',
     time: formData.time,
+    status: formData.status,
     avatar: `https://picsum.photos/20?${Date.now()}`,
     hasApproval: columnId === 'in-review'
   };
@@ -568,12 +981,11 @@ function handleNewProjectSubmit(event: Event) {
   
   const projectName = document.getElementById('projectName') as HTMLInputElement;
   const projectColor = document.getElementById('projectColor') as HTMLSelectElement;
-  const projectStarred = document.getElementById('projectStarred') as HTMLInputElement;
   
   const projectData = {
     name: projectName.value.trim(),
     color: projectColor.value,
-    starred: projectStarred.checked
+    starred: false // New projects are not starred by default
   };
   
   if (!projectData.name) {
@@ -607,7 +1019,7 @@ document.addEventListener('click', (e) => {
     const projectId = projectLink.getAttribute('data-project-id');
     
     // Check if clicking on star
-    if (target.textContent === '★') {
+    if (target.classList.contains('fa-star')) {
       kanban.toggleProjectStar(projectId!);
     } else {
       console.log(`Selected project: ${projectId}`);
@@ -634,10 +1046,43 @@ document.addEventListener('click', (e) => {
     case 'close-new-project-modal':
       closeNewProjectModal();
       break;
+    case 'open-archive-modal':
+      openArchiveModal();
+      break;
+    case 'close-archive-modal':
+      closeArchiveModal();
+      break;
     case 'approve-task':
       const taskId = target.getAttribute('data-task-id');
       if (taskId) {
         kanban.approveTask(taskId);
+      }
+      break;
+    case 'archive-task':
+      const archiveTaskId = target.getAttribute('data-task-id');
+      if (archiveTaskId) {
+        kanban.archiveTask(archiveTaskId);
+      }
+      break;
+    case 'restore-task':
+      const restoreTaskId = target.getAttribute('data-task-id');
+      if (restoreTaskId) {
+        kanban.restoreTask(restoreTaskId);
+        renderArchivedTasks(); // Refresh the archive modal
+      }
+      break;
+    case 'delete-archived-task':
+      const deleteTaskId = target.getAttribute('data-task-id');
+      if (deleteTaskId && confirm('Are you sure you want to permanently delete this task?')) {
+        kanban.deleteArchivedTask(deleteTaskId);
+        renderArchivedTasks(); // Refresh the archive modal
+      }
+      break;
+    case 'toggle-status':
+    case 'set-status':
+      const statusTaskId = target.getAttribute('data-task-id');
+      if (statusTaskId) {
+        showStatusMenu(statusTaskId, target);
       }
       break;
   }
@@ -655,6 +1100,8 @@ document.addEventListener('click', (e) => {
       closeNewTaskModal();
     } else if (target.id === 'newProjectModal') {
       closeNewProjectModal();
+    } else if (target.id === 'archiveModal') {
+      closeArchiveModal();
     }
   }
 });
@@ -664,6 +1111,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeNewTaskModal();
     closeNewProjectModal();
+    closeArchiveModal();
   }
 });
 
@@ -694,10 +1142,14 @@ document.addEventListener('keydown', (e) => {
 
 (window as any).openNewTaskModal = openNewTaskModal;
 (window as any).openNewProjectModal = openNewProjectModal;
+(window as any).openArchiveModal = openArchiveModal;
 
 console.log('Dynamic Kanban Board loaded! Available commands:');
 console.log('- kanban.addTask(columnId, taskData)');
 console.log('- kanban.removeTask(taskId)');
+console.log('- kanban.archiveTask(taskId) - archive a task');
+console.log('- kanban.restoreTask(taskId) - restore archived task');
+console.log('- kanban.getArchivedTasks() - get all archived tasks');
 console.log('- kanban.addProject(projectData)');
 console.log('- kanban.removeProject(projectId)');
 console.log('- kanban.resetData()');
@@ -707,3 +1159,4 @@ console.log('- resetBoard() - resets to default data');
 console.log('- exportBoard() - exports current data');
 console.log('- openNewTaskModal() - opens new task dialog');
 console.log('- openNewProjectModal() - opens new project dialog');
+console.log('- openArchiveModal() - opens archive dialog');

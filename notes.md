@@ -1,0 +1,2 @@
+- all the controls should be inside the js only means eventlistners should be attached using selector and js.
+- use data- attributes based selectors.
