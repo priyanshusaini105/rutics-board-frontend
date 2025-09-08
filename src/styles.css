@@ -197,3 +197,164 @@
   opacity: 0;
   transition: all 0.3s ease-in;
 }
+
+/* Responsive text handling */
+.text-truncate-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+  max-height: 2.8em;
+}
+
+.text-truncate-single {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Improved word breaking for long text without spaces */
+.break-words-force {
+  word-break: break-all;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Task card improvements */
+.task-card {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.task-card h3 {
+  line-height: 1.3;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.task-card .task-assignee,
+.task-card .task-project {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Project list improvements */
+.project-item {
+  min-height: 40px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.project-name {
+  line-height: 1.3;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 180px;
+}
+
+/* Mobile sidebar */
+.mobile-sidebar-open {
+  transform: translateX(0) !important;
+}
+
+/* Scrollbar styling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgb(39 39 42);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgb(113 113 122);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgb(161 161 170);
+}
+
+/* Column scrolling */
+.kanban-column {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .modal-content {
+    max-width: 90vw;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 95vw;
+    padding: 1rem;
+  }
+  
+  .task-card .task-assignee,
+  .task-card .task-project {
+    max-width: 100px;
+  }
+  
+  .project-name {
+    max-width: 140px;
+  }
+}
+
+/* Focus and accessibility improvements */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid rgb(59 130 246);
+  outline-offset: 2px;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Animation for new items */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .modal-content {
+    border: 2px solid white;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -6,9 +6,71 @@
     <title>Kanban Dashboard</title>
   </head>
   <body class="bg-zinc-900 text-zinc-100">
-    <div class="min-h-screen grid grid-cols-[240px_1fr]">
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex items-center justify-between p-4 bg-zinc-800 border-b border-zinc-700">
+      <h1 class="text-lg font-semibold">Kanban Dashboard</h1>
+      <button id="open-mobile-menu" class="p-2 rounded-md hover:bg-zinc-700">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="mobile-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden hidden">
+      <aside id="mobile-sidebar" class="fixed left-0 top-0 h-full w-80 bg-zinc-900 border-r border-zinc-800 overflow-y-auto z-50 transform -translate-x-full transition-transform duration-300">
+        <div class="h-14 flex items-center justify-between px-4 border-b border-zinc-700">
+          <div class="flex items-center">
+            <div class="h-8 w-8 rounded-full bg-zinc-700"></div>
+            <span class="ml-3 text-sm font-semibold text-zinc-300">Logo</span>
+          </div>
+          <button id="close-mobile-menu" class="p-2 rounded-md hover:bg-zinc-800">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <nav class="px-2 py-3 space-y-6 text-sm">
+          <div class="space-y-1">
+            <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px]">Main</div>
+            <a class="flex items-center gap-2 px-2 py-2 rounded-md bg-zinc-800 text-zinc-100" href="#">
+              <i class="fas fa-th-large w-4 h-4 text-center flex-shrink-0"></i>
+              <span class="truncate">My Desk</span>
+            </a>
+            <a class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">
+              <i class="fas fa-layer-group w-4 h-4 text-center flex-shrink-0"></i>
+              <span class="truncate">Everything</span>
+            </a>
+          </div>
+          <div class="space-y-1">
+            <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px] flex justify-between items-center">
+              <span>Projects</span>
+              <button data-action="open-new-project-modal" class="w-4 h-4 bg-zinc-600 hover:bg-zinc-500 rounded text-zinc-200 text-xs flex items-center justify-center transition-colors flex-shrink-0">
+                +
+              </button>
+            </div>
+            <ul class="space-y-1 max-h-80 overflow-y-auto custom-scrollbar" id="mobile-project-list">
+              <!-- Projects will be dynamically loaded here -->
+            </ul>
+          </div>
+          <div class="mt-6 space-y-1">
+            <a class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">
+              <i class="fas fa-question-circle w-4 h-4 text-center flex-shrink-0"></i>
+              <span class="truncate">Need Help</span>
+            </a>
+            <a class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">
+              <i class="fas fa-cog w-4 h-4 text-center flex-shrink-0"></i>
+              <span class="truncate">Settings</span>
+            </a>
+            <button data-action="open-archive-modal" class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300 w-full text-left">
+              <i class="fas fa-archive w-4 h-4 text-center flex-shrink-0"></i>
+              <span class="truncate">Archive</span>
+            </button>
+          </div>
+        </nav>
+      </aside>
+    </div>
+
+    <div class="min-h-screen flex lg:grid lg:grid-cols-[280px_1fr]">
       <!-- Sidebar -->
-      <aside class="border-r border-zinc-800 bg-zinc-900">
+      <aside class="hidden lg:block border-r border-zinc-800 bg-zinc-900 overflow-y-auto">
+        <!-- Sidebar content remains the same -->
         <div class="h-14 flex items-center px-4">
           <div class="h-8 w-8 rounded-full bg-zinc-700"></div>
           <span class="ml-3 text-sm font-semibold text-zinc-300">Logo</span>
@@ -17,94 +79,144 @@
           <div class="space-y-1">
             <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px]">Main</div>
             <a class="flex items-center gap-2 px-2 py-2 rounded-md bg-zinc-800 text-zinc-100" href="#">
-              <i class="fas fa-th-large w-4 h-4 text-center"></i>
-              My Desk
+              <i class="fas fa-th-large w-4 h-4 text-center flex-shrink-0"></i>
+              <span class="truncate">My Desk</span>
             </a>
             <a class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">
-              <i class="fas fa-layer-group w-4 h-4 text-center"></i>
-              Everything
-            </a>
-            <a class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">
-              <i class="fas fa-bullseye w-4 h-4 text-center"></i>
-              Track
+              <i class="fas fa-layer-group w-4 h-4 text-center flex-shrink-0"></i>
+              <span class="truncate">Everything</span>
             </a>
           </div>
           <div class="space-y-1">
             <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px] flex justify-between items-center">
               <span>Projects</span>
-              <button data-action="open-new-project-modal" class="w-4 h-4 bg-zinc-600 hover:bg-zinc-500 rounded text-zinc-200 text-xs flex items-center justify-center transition-colors">
+              <button data-action="open-new-project-modal" class="w-4 h-4 bg-zinc-600 hover:bg-zinc-500 rounded text-zinc-200 text-xs flex items-center justify-center transition-colors flex-shrink-0">
                 +
               </button>
             </div>
-            <ul class="space-y-1" id="project-list">
+            <ul class="space-y-1 max-h-80 overflow-y-auto" id="project-list">
               <!-- Projects will be dynamically loaded here -->
             </ul>
           </div>
           <div class="mt-6 space-y-1">
-            <a class="block px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">Need Help</a>
-            <a class="block px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">Settings</a>
+            <a class="block px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300 truncate" href="#">Need Help</a>
+            <a class="block px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300 truncate" href="#">Settings</a>
             <button data-action="open-archive-modal" class="w-full text-left px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300 flex items-center gap-2">
-              <i class="fas fa-archive w-4 h-4 text-center"></i>
-              Archive
+              <i class="fas fa-archive w-4 h-4 text-center flex-shrink-0"></i>
+              <span class="truncate">Archive</span>
             </button>
           </div>
         </nav>
       </aside>
 
       <!-- Main -->
-      <main class="flex flex-col">
+      <main class="flex flex-col flex-1">
         <!-- Board header -->
-        <div class="px-6 py-4 flex justify-between items-center">
-          <h1 class="text-lg font-semibold">Everything</h1>
-          <button data-action="open-new-task-modal" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors">
-            + Add Task
+        <div class="px-4 lg:px-6 py-4 flex justify-between items-center">
+          <h1 class="hidden lg:block text-lg font-semibold">Everything</h1>
+          <button data-action="open-new-task-modal" class="px-3 py-2 lg:px-4 lg:py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors">
+            <span class="hidden sm:inline">+ Add Task</span>
+            <span class="sm:hidden">+</span>
           </button>
         </div>
 
-        <!-- Board: only three columns -->
-        <section class="px-4 pb-6 overflow-x-auto">
-          <div class="grid auto-cols-[minmax(320px,1fr)] grid-flow-col gap-4">
+        <!-- Board: responsive columns -->
+        <section class="px-2 lg:px-4 pb-6 overflow-x-auto flex-1">
+          <div class="flex gap-3 lg:gap-4 min-w-max lg:grid lg:auto-cols-[minmax(320px,1fr)] lg:grid-flow-col">
             <!-- Up Next -->
-            <div class="bg-zinc-900">
+            <div class="bg-zinc-900 w-80 lg:w-auto flex-shrink-0">
               <div class="sticky top-0 z-10 bg-zinc-900">
                 <h2 class="px-3 py-2 text-sm font-semibold text-zinc-200">
                   Up Next
-                  <span class="ml-1 rounded bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-400">5</span>
+                  <span class="ml-1 rounded bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-400">12</span>
                 </h2>
               </div>
-              <div class="space-y-3" data-kanban-column="up-next">
+              <div class="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto px-1 custom-scrollbar" data-kanban-column="up-next">
                 <!-- Tasks will be dynamically loaded here -->
               </div>
             </div>
 
             <!-- In Progress -->
-            <div class="bg-zinc-900">
+            <div class="bg-zinc-900 w-80 lg:w-auto flex-shrink-0">
               <div class="sticky top-0 z-10 bg-zinc-900">
                 <h2 class="px-3 py-2 text-sm font-semibold text-zinc-200">
                   In Progress
-                  <span class="ml-1 rounded bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-400">2</span>
+                  <span class="ml-1 rounded bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-400">7</span>
                 </h2>
               </div>
-              <div class="space-y-3" data-kanban-column="in-progress">
+              <div class="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto px-1 custom-scrollbar" data-kanban-column="in-progress">
                 <!-- Tasks will be dynamically loaded here -->
               </div>
             </div>
 
             <!-- In Review -->
-            <div class="bg-zinc-900">
+            <div class="bg-zinc-900 w-80 lg:w-auto flex-shrink-0">
               <div class="sticky top-0 z-10 bg-zinc-900">
                 <h2 class="px-3 py-2 text-sm font-semibold text-zinc-200">
                   In Review
-                  <span class="ml-1 rounded bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-400">3</span>
+                  <span class="ml-1 rounded bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-400">9</span>
                 </h2>
               </div>
-              <div class="space-y-3" data-kanban-column="in-review">
+              <div class="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto px-1 custom-scrollbar" data-kanban-column="in-review">
                 <!-- Tasks will be dynamically loaded here -->
               </div>
             </div>
           </div>
         </section>
       </main>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="mobile-sidebar" class="fixed inset-0 z-50 lg:hidden transform -translate-x-full transition-transform duration-300 ease-in-out">
+      <div class="flex">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-black bg-opacity-50" id="mobile-backdrop"></div>
+        
+        <!-- Sidebar -->
+        <aside class="relative bg-zinc-900 w-80 h-full overflow-y-auto border-r border-zinc-800">
+          <div class="h-14 flex items-center justify-between px-4">
+            <div class="flex items-center">
+              <div class="h-8 w-8 rounded-full bg-zinc-700"></div>
+              <span class="ml-3 text-sm font-semibold text-zinc-300">Logo</span>
+            </div>
+            <button id="close-mobile-menu" class="p-2 rounded-md hover:bg-zinc-800">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <nav class="px-2 py-3 space-y-6 text-sm">
+            <div class="space-y-1">
+              <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px]">Main</div>
+              <a class="flex items-center gap-2 px-2 py-2 rounded-md bg-zinc-800 text-zinc-100" href="#">
+                <i class="fas fa-th-large w-4 h-4 text-center"></i>
+                My Desk
+              </a>
+              <a class="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">
+                <i class="fas fa-layer-group w-4 h-4 text-center"></i>
+                Everything
+              </a>
+            </div>
+            <div class="space-y-1">
+              <div class="px-2 text-zinc-400 uppercase tracking-wide text-[11px] flex justify-between items-center">
+                <span>Projects</span>
+                <button data-action="open-new-project-modal" class="w-4 h-4 bg-zinc-600 hover:bg-zinc-500 rounded text-zinc-200 text-xs flex items-center justify-center transition-colors">
+                  +
+                </button>
+              </div>
+              <ul class="space-y-1 max-h-60 overflow-y-auto" id="mobile-project-list">
+                <!-- Projects will be dynamically loaded here -->
+              </ul>
+            </div>
+            <div class="mt-6 space-y-1">
+              <a class="block px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">Need Help</a>
+              <a class="block px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300" href="#">Settings</a>
+              <button data-action="open-archive-modal" class="w-full text-left px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300 flex items-center gap-2">
+                <i class="fas fa-archive w-4 h-4 text-center"></i>
+                Archive
+              </button>
+            </div>
+          </nav>
+        </aside>
+      </div>
     </div>
     
     <!-- New Task Modal -->

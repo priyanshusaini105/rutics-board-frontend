@@ -183,7 +183,7 @@ class KanbanBoard {
   // Create a task element from data
   createTaskElement(task: any) {
     const article = document.createElement('article');
-    article.className = 'mx-2 rounded-lg border border-zinc-800 bg-zinc-800/60 p-3 shadow-sm hover:border-zinc-700';
+    article.className = 'task-card mx-2 rounded-lg border border-zinc-800 bg-zinc-800/60 p-3 shadow-sm hover:border-zinc-700 fade-in-up';
     article.setAttribute('data-kanban-task', 'true');
     article.setAttribute('data-task-id', task.id);
 
@@ -214,21 +214,21 @@ class KanbanBoard {
     // Create status badge and archive button row
     const statusRow = task.status && statusMap[task.status] ? `
       <div class="mb-2 flex items-center justify-between">
-        <span class="inline-flex items-center gap-1 rounded border ${statusMap[task.status].class} px-2 py-0.5 text-[10px] font-medium cursor-pointer hover:opacity-80 transition-opacity" data-action="toggle-status" data-task-id="${task.id}">
+        <span class="inline-flex items-center gap-1 rounded border ${statusMap[task.status].class} px-2 py-0.5 text-[10px] font-medium cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0" data-action="toggle-status" data-task-id="${task.id}">
           <i class="${statusMap[task.status].icon} text-xs"></i>
           ${statusMap[task.status].text}
         </span>
-        <button data-action="archive-task" data-task-id="${task.id}" class="p-1 hover:bg-red-700/20 hover:text-red-400 rounded transition-all duration-200" title="Archive task">
+        <button data-action="archive-task" data-task-id="${task.id}" class="p-1 hover:bg-red-700/20 hover:text-red-400 rounded transition-all duration-200 flex-shrink-0" title="Archive task">
           <i class="fas fa-archive text-zinc-500 hover:text-red-400 text-sm"></i>
         </button>
       </div>
     ` : `
       <div class="mb-2 flex items-center justify-between">
-        <span class="inline-flex items-center gap-1 rounded border bg-zinc-800/60 text-zinc-400 border-zinc-700/60 px-2 py-0.5 text-[10px] font-medium cursor-pointer hover:bg-zinc-700/60 transition-colors" data-action="set-status" data-task-id="${task.id}">
+        <span class="inline-flex items-center gap-1 rounded border bg-zinc-800/60 text-zinc-400 border-zinc-700/60 px-2 py-0.5 text-[10px] font-medium cursor-pointer hover:bg-zinc-700/60 transition-colors flex-shrink-0" data-action="set-status" data-task-id="${task.id}">
           <i class="fas fa-plus text-xs"></i>
           Status
         </span>
-        <button data-action="archive-task" data-task-id="${task.id}" class="p-1 hover:bg-red-700/20 hover:text-red-400 rounded transition-all duration-200" title="Archive task">
+        <button data-action="archive-task" data-task-id="${task.id}" class="p-1 hover:bg-red-700/20 hover:text-red-400 rounded transition-all duration-200 flex-shrink-0" title="Archive task">
           <i class="fas fa-archive text-zinc-500 hover:text-red-400 text-sm"></i>
         </button>
       </div>
@@ -244,24 +244,27 @@ class KanbanBoard {
     ` : '';
 
     // Create time display for non-review tasks
-    const timeDisplay = task.time ? `<span class="text-[11px] text-zinc-400">${task.time}</span>` : '';
+    const timeDisplay = task.time ? `<span class="text-[11px] text-zinc-400 flex-shrink-0">${this.escapeHtml(task.time)}</span>` : '';
+
+    // Truncate long titles with proper word breaking
+    const truncatedTitle = this.truncateText(task.title, 80);
 
     article.innerHTML = `
       ${statusRow}
       <header class="flex items-start justify-between group">
-        <h3 class="text-sm font-medium pr-2">${task.title}</h3>
-        <div class="flex items-center gap-1">
+        <h3 class="text-sm font-medium pr-2 break-words-force min-w-0 flex-1" title="${this.escapeHtml(task.title)}">${this.escapeHtml(truncatedTitle)}</h3>
+        <div class="flex items-center gap-1 flex-shrink-0">
           ${timeDisplay}
         </div>
       </header>
       ${approvalButton}
       <footer class="mt-2 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <img class="h-5 w-5 rounded-full" src="${task.avatar}" alt="${task.assignee}">
-          <span class="text-xs text-zinc-300">${task.assignee}</span>
+        <div class="flex items-center gap-2 min-w-0 flex-1">
+          <img class="h-5 w-5 rounded-full flex-shrink-0" src="${task.avatar}" alt="${this.escapeHtml(task.assignee)}">
+          <span class="task-assignee text-xs text-zinc-300 truncate" title="${this.escapeHtml(task.assignee)}">${this.escapeHtml(task.assignee)}</span>
         </div>
-        <div class="flex items-center gap-1">
-          <span class="rounded ${projectColorClass} px-2 py-0.5 text-[11px]">${task.project}</span>
+        <div class="flex items-center gap-1 flex-shrink-0">
+          <span class="task-project rounded ${projectColorClass} px-2 py-0.5 text-[11px] truncate max-w-24" title="${this.escapeHtml(task.project)}">${this.escapeHtml(task.project)}</span>
         </div>
       </footer>
     `;
@@ -269,22 +272,37 @@ class KanbanBoard {
     return article;
   }
 
+  // Helper function to truncate text
+  truncateText(text: string, maxLength: number): string {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+
   // Render projects in the sidebar
   renderProjects() {
     const projectList = document.getElementById('project-list');
-    if (!projectList) return;
+    const mobileProjectList = document.getElementById('mobile-project-list');
+    
+    [projectList, mobileProjectList].forEach(list => {
+      if (!list) return;
+      list.innerHTML = '';
+    });
 
-    projectList.innerHTML = '';
+    // Sort projects: starred projects first, then unstarred
+    const sortedProjects = [...this.data.projects].sort((a, b) => {
+      if (a.starred && !b.starred) return -1;
+      if (!a.starred && b.starred) return 1;
+      return 0;
+    });
 
-    this.data.projects.forEach((project: any) => {
-      const li = document.createElement('li');
-      
-      li.innerHTML = `
-        <div class="group flex items-center justify-between px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300">
-          <a class="flex items-center gap-2 truncate cursor-pointer" href="#" data-project-id="${project.id}">
-            <span class="truncate">${project.name}</span>
+    sortedProjects.forEach((project: any) => {
+      const projectHtml = `
+        <div class="project-item group flex items-center justify-between px-2 py-2 rounded-md hover:bg-zinc-800 text-zinc-300">
+          <a class="flex items-center gap-2 min-w-0 flex-1 cursor-pointer" href="#" data-project-id="${project.id}">
+            ${project.starred ? '<i class="fas fa-star text-amber-400 text-xs flex-shrink-0"></i>' : ''}
+            <span class="project-name truncate text-sm" title="${this.escapeHtml(project.name)}">${this.escapeHtml(project.name)}</span>
           </a>
-          <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
             <button class="project-star-btn p-1 hover:bg-zinc-700 rounded" data-project-id="${project.id}" title="${project.starred ? 'Unstar project' : 'Star project'}">
               <i class="fas fa-star text-xs ${project.starred ? 'text-amber-400' : 'text-zinc-500'}"></i>
             </button>
@@ -295,7 +313,13 @@ class KanbanBoard {
         </div>
       `;
 
-      projectList.appendChild(li);
+      [projectList, mobileProjectList].forEach(list => {
+        if (list) {
+          const li = document.createElement('li');
+          li.innerHTML = projectHtml;
+          list.appendChild(li);
+        }
+      });
     });
 
     // Add event listeners for star and delete buttons
@@ -322,6 +346,13 @@ class KanbanBoard {
     });
 
     console.log('Projects rendered in sidebar');
+  }
+
+  // Helper function to escape HTML
+  escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 
   // Toggle project star status
@@ -1143,6 +1174,85 @@ document.addEventListener('keydown', (e) => {
 (window as any).openNewTaskModal = openNewTaskModal;
 (window as any).openNewProjectModal = openNewProjectModal;
 (window as any).openArchiveModal = openArchiveModal;
+
+// Initialize mobile menu when DOM is loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeMobileMenu);
+} else {
+  initializeMobileMenu();
+}
+
+// Add responsive column height management
+function handleResponsiveLayout() {
+  const columns = document.querySelectorAll('[data-kanban-column]');
+  
+  function updateColumnHeights() {
+    const viewportHeight = window.innerHeight;
+    const headerHeight = document.querySelector('main > div')?.getBoundingClientRect().height || 80;
+    const availableHeight = viewportHeight - headerHeight - 100; // 100px buffer
+    
+    columns.forEach(column => {
+      const columnElement = column as HTMLElement;
+      columnElement.style.maxHeight = `${availableHeight}px`;
+    });
+  }
+  
+  updateColumnHeights();
+  window.addEventListener('resize', updateColumnHeights);
+  window.addEventListener('orientationchange', () => {
+    setTimeout(updateColumnHeights, 100);
+  });
+}
+
+// Initialize responsive layout
+handleResponsiveLayout();
+
+// Initialize mobile menu functionality
+function initializeMobileMenu() {
+  const openBtn = document.getElementById('open-mobile-menu');
+  const closeBtn = document.getElementById('close-mobile-menu');
+  const overlay = document.getElementById('mobile-sidebar-overlay');
+  const sidebar = document.getElementById('mobile-sidebar');
+
+  if (openBtn && closeBtn && overlay && sidebar) {
+    openBtn.addEventListener('click', () => {
+      overlay.classList.remove('hidden');
+      setTimeout(() => {
+        sidebar.classList.remove('-translate-x-full');
+      }, 10);
+    });
+
+    closeBtn.addEventListener('click', closeMobileMenu);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        closeMobileMenu();
+      }
+    });
+
+    function closeMobileMenu() {
+      if (sidebar && overlay) {
+        sidebar.classList.add('-translate-x-full');
+        setTimeout(() => {
+          overlay.classList.add('hidden');
+        }, 300);
+      }
+    }
+
+    // Sync mobile project list with main project list
+    const mainProjectList = document.getElementById('project-list');
+    const mobileProjectList = document.getElementById('mobile-project-list');
+    if (mainProjectList && mobileProjectList) {
+      // Copy content from main project list to mobile project list
+      const observer = new MutationObserver(() => {
+        mobileProjectList.innerHTML = mainProjectList.innerHTML;
+      });
+      observer.observe(mainProjectList, { childList: true, subtree: true });
+      mobileProjectList.innerHTML = mainProjectList.innerHTML;
+    }
+  }
+}
+
+initializeMobileMenu();
 
 console.log('Dynamic Kanban Board loaded! Available commands:');
 console.log('- kanban.addTask(columnId, taskData)');
